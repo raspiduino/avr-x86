@@ -32,10 +32,6 @@
 
 FATFS fs; // Create a filesystem object
 
-/* Functions */
-void errorHalt(char* msg);
-char* fileinput();
-
 /* ------------------------ setup() function ------------------------- */
 void setup() {
     Serial.begin(9600); // Open serial port with baud 9600 bps
@@ -43,53 +39,23 @@ void setup() {
     /*  Display welcome messages  */
     Serial.println(F("avr-x86 - Copyright (C) 2021 @raspiduino"));
     Serial.println(F("Github repo: https://github.com/raspiduino/avr-x86"));
-    Serial.println(F("This program comes with ABSOLUTELY NO WARRANTY."));
-    Serial.println(F("This is free software, and you are welcome to redistribute it under certain conditions. See GPL-v3 license"));
+    Serial.println(F("Under GPL-v3"));
 
     /* Init the SD card */
-    if (pf_mount(&fs)) errorHalt("pf_mount"); // Mount filesystem
+    Serial.print(F("Init SD card"));
+    while(pf_mount(&fs)) Serial.print("."); // Mount filesystem
+    Serial.println(F(". Done!"));
     
-    /* Ask for virtual disk file to boot from */
-    while(pf_open(fileinput())) fileinput();
+    /* Copy data from virtual disk to virtual ram */
+    ramload();
 
     /* Init the fake86 */
+    Serial.print(F("Init Fake86"));
     init86();
-    
-    /* Read data from the virtual disk file and run fake86 to emulate it */
-    
+    Serial.println(F(". Done! Starting emulator..."));
 }
 
 /* ------------------------ loop() function -------------------------- */
 void loop() {
-    
-}
-
-/* --------------------------- Functions ----------------------------- */
-/* errorHalt() - Function to raise error */
-void errorHalt(char* msg){
-    Serial.print("Error: ");
-    Serial.println(msg);
-    while(1);
-}
-
-/* fileinput() - Ask for virtual disk file to boot from */
-char* fileinput(){
-    Serial.print(F("Please enter virtual disk file to boot: "));
-    
-    while(Serial.available() == 0); // Wait until Serial input
-    
-    String tmpstring;
-    while(Serial.available() > 0){
-        // Read the char
-        int incomingByte = Serial.read(); //Read the character ASCII number to the incomingByte varrible
-        
-        if(incomingByte == 13 | incomingByte == 10) break;
-        else{
-            tmpstring = String(tmpstring + char(incomingByte));
-        }
-    }
-    
-    char filepath[80];
-    tmpstring.toCharArray(filepath, sizeof(tmpstring)); // Convert the filepath to char array
-    return filepath;
+    exec86(100); // Execute fake86
 }

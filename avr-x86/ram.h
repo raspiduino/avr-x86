@@ -14,8 +14,19 @@
 
     You should have received a copy of the GNU General Public License
     along with this program. If not, see <https://www.gnu.org/licenses/>.
-
-    outputserial.h - Based on https://stackoverflow.com/questions/66632376/how-to-call-serial-print-from-c-file-in-arduino-ide
 */
 
-void my_log(char *msg);
+/* PetitFS */
+#include <PetitFS.h>
+#include <PetitSerial.h>
+
+#include "outputserial.h"
+#include "config.h"
+
+byte ramread(uint32_t addr);
+void ramwrite(uint32_t addr, byte value);
+void ramload();
+
+extern char filepath[80];
+
+char* fileinput();

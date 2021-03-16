@@ -14,8 +14,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program. If not, see <https://www.gnu.org/licenses/>.
-
-    outputserial.h - Based on https://stackoverflow.com/questions/66632376/how-to-call-serial-print-from-c-file-in-arduino-ide
 */
 
-void my_log(char *msg);
+#define RAM_LENGTH 4096 // Set the amount of RAM - in byte. You must set it to fit your vram file
+#define RAM_BUFFER 64 // Set the RAM buffer size when load disk image to virtual RAM.
