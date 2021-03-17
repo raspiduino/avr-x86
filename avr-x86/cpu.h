@@ -18,7 +18,7 @@
 
 #include <stdint.h>
 #include <Arduino.h>
-#include "outputserial.h"
+#include "outputserial.cpp"
 #include "ram.h"
 
 void decodeflagsword( word x);

@@ -19,10 +19,6 @@
 */
 
 #include <Arduino.h>
-extern "C" {
-  #include "outputserial.h"
-}
-
-void my_log(char *msg) {
-  Serial.println(msg);
-}
+//extern "C" {
+//    #include "outputserial.h"
+//}

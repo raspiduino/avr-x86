@@ -39,7 +39,7 @@ void setup() {
     /*  Display welcome messages  */
     Serial.println(F("avr-x86 - Copyright (C) 2021 @raspiduino"));
     Serial.println(F("Github repo: https://github.com/raspiduino/avr-x86"));
-    Serial.println(F("Under GPL-v3"));
+    //Serial.println(F("Under GPL-v3"));
 
     /* Init the SD card */
     Serial.print(F("Init SD card"));

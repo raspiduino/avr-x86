@@ -20,13 +20,13 @@
 #include <PetitFS.h>
 #include <PetitSerial.h>
 
-#include "outputserial.h"
+#include "outputserial.cpp"
 #include "config.h"
 
 byte ramread(uint32_t addr);
 void ramwrite(uint32_t addr, byte value);
 void ramload();
+void sd_error(char *msg);
 
 extern char filepath[80];
-
-char* fileinput();
+void fileinput();

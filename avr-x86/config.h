@@ -16,5 +16,15 @@
     along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#define RAM_LENGTH 4096 // Set the amount of RAM - in byte. You must set it to fit your vram file
+#define RAM_LENGTH 253 // Set the amount of RAM - in byte. You must set it to fit your vram file
 #define RAM_BUFFER 64 // Set the RAM buffer size when load disk image to virtual RAM.
+#define RAM_FILE "RAM.BIN" // Set the virtual RAM File location
+
+// Boot file settings
+//#define BOOT_PROMPT // Comment this to disable boot prompt
+
+#ifndef BOOT_PROMPT
+#define BOOT_FILE "OS.FLP" // If you disable boot prompt, you must set a boot file
+#endif
+
+#define ONE_USE // Don't use this. This is basicly use the input file as ram file (direct RAM)
