@@ -26,6 +26,7 @@ If you have any ideas, you can open an issue and tell me!
 - [CP/M on an AVR by *Spritesmods.com*](https://spritesmods.com/?art=avrcpm)
 - [Launch .COM file on Arduino by *corax89* (the repo where this repo forked)](https://github.com/corax89/Arduino_8086_emulator)
 - [8086 emulator on Arduino DUE by *miker00lz*](https://forum.arduino.cc/index.php?topic=605391.0)
+- [8086 emulator on ESP8266 (include video)](https://www.hackster.io/janost/ibm-pc-xt-emulator-on-an-esp8266-42abcc)
 
 # Configs
 There are configs macro inside *config.h*. You can follow the instructions in that file.
