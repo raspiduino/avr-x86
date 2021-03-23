@@ -16,9 +16,10 @@
     along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
-/* PetitFS */
-#include <PetitFS.h>
-#include <PetitSerial.h>
+/* Fat16 */
+#include <Fat16.h>
+
+#include <string.h>
 
 #include "outputserial.cpp"
 #include "config.h"
@@ -26,7 +27,9 @@
 byte ramread(uint32_t addr);
 void ramwrite(uint32_t addr, byte value);
 void ramload();
-void sd_error(char *msg);
+void sdinit();
 
-extern char filepath[80];
+extern char filepath[12];
+extern SdCard card;
+extern Fat16 file;
 void fileinput();

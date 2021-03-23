@@ -17,20 +17,8 @@
 */
 
 /* ------------------------ Include libraries ------------------------ */
-/* PetitFS */
-#include <PetitFS.h>
-#include <PetitSerial.h>
-
 /* Fake86 */
 #include "cpu.h"
-
-/* ------------ Varriables, macros, objects and functions ------------ */
-/* Instances of classes */
-// Use PetitSerial instead of normal Serial (compatibility reason)
-//PetitSerial PS;
-//#define Serial PS
-
-FATFS fs; // Create a filesystem object
 
 /* ------------------------ setup() function ------------------------- */
 void setup() {
@@ -39,12 +27,10 @@ void setup() {
     /*  Display welcome messages  */
     Serial.println(F("avr-x86 - Copyright (C) 2021 @raspiduino"));
     Serial.println(F("Github repo: https://github.com/raspiduino/avr-x86"));
-    //Serial.println(F("Under GPL-v3"));
+    Serial.println(F("Under GPL-v3"));
 
-    /* Init the SD card */
-    Serial.print(F("Init SD card"));
-    while(pf_mount(&fs)) Serial.print("."); // Mount filesystem
-    Serial.println(F(". Done!"));
+    /* Init SD card */
+    sdinit();
     
     /* Copy data from virtual disk to virtual ram */
     ramload();

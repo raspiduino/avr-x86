@@ -27,55 +27,59 @@
 
 #include "ram.h"
 
+SdCard card;
+Fat16 file;
+
 #ifdef BOOT_PROMPT
-char filepath[80]; // Virtual disk filepath
+char filepath[12]; // Virtual disk filepath
 #endif
 #ifndef BOOT_PROMPT
 char filepath[] = BOOT_FILE;
 #endif
 
+void sdinit(){
+    /* Init the SD card */
+    Serial.print(F("Init SD card"));
+    while(!card.begin(CHIP_SELECT)) Serial.print("."); // Mount filesystem
+    Serial.print(F(". Done! Init filesystem"));
+    while(!Fat16::init(&card)) Serial.print(".");
+    Serial.println(F(". Done!"));
+}
+
 void ramload(){
     #ifdef BOOT_PROMPT
     fileinput();
-    while(pf_open(filepath)){
-        Serial.print(F("Error opening "));
-        Serial.println(filepath);
+    while(!file.open(filepath, O_READ|O_WRITE)){
+        //Serial.print(F("Error opening "));
+        //Serial.println(filepath);
         fileinput();
     }
     #endif
-    #ifndef BOOT_PROMPT
-    pf_open(filepath); // Open disk image file
-    #endif
-    
-    Serial.print(F("Loading disk image"));
 
     #ifndef ONE_USE
     int ramloc = 0;
-    uint8_t buf[RAM_BUFFER];
+    char buf[RAM_BUFFER];
+    Serial.print(F("Loading disk image"));
     
     while (1) {
-        pf_lseek(ramloc); // Change the cusor
-
         // Read disk image
-        UINT nr1;
-        pf_read(buf, RAM_BUFFER, &nr1); // Read disk image
-        if (nr1 == 0) break; // Break at the end of file
-
-        //Serial.write(buf, nr1); // For debug only
+        file.open(filepath, O_READ);
+        file.seekSet(ramloc); // Change the cusor
+        int nr = file.read(buf, RAM_BUFFER); // Read disk image
+        //const int ntb = file.fileSize()%RAM_BUFFER; // Number left on the last read
+        //if (nr <= ntb) break; // Break at the end of file
+        file.close();
 
         // Write to vram
-        UINT nr2;
-        pf_open(RAM_FILE); // Open ram image file
-        pf_lseek(ramloc); // Change the cusor
-        pf_write(buf, nr1, &nr2); // Write ram image
-        pf_write(0, 0, &nr2); // End of writing
+        file.open(RAM_FILE, O_WRITE|O_CREAT); // Open ram image file
+        file.seekSet(ramloc); // Change the cusor
+        file.write(buf, RAM_BUFFER);
+        file.close();
 
+        if (nr < RAM_BUFFER) break;
         ramloc = ramloc + RAM_BUFFER; // Increase ramloc
 
-        delay(200);
-
-        pf_open(filepath);
-
+        //file.open(filepath, O_READ);
         Serial.print(F("."));
     }
 
@@ -83,52 +87,37 @@ void ramload(){
     #endif
 }
 
-#ifdef ONE_USE
 byte ramread(uint32_t addr){
-    uint8_t buf[1];
-    
-    pf_open(filepath); // Open ram image file
-    UINT nr;
-    pf_lseek(int(addr)); // Change the cusor
-    pf_read(buf, 1, &nr); // Read disk image
-    return buf[0]; // Return the buffer
-}
+    byte buf[1];
 
-void ramwrite(uint32_t addr, byte value){
-    Serial.println(value);
-    uint8_t buf[1];
-    buf[0] = value;
-    pf_open(filepath); // Open ram image file
-    UINT nr;
-    pf_lseek(int(addr)); // Change the cusor
-    pf_write(buf, 1, &nr); // Write ram image
-    Serial.write(buf, nr);
-    Serial.println(nr);
-    pf_write(0, 0, &nr); // End of writing
-}
-#endif
-#ifndef ONE_USE
-byte ramread(uint32_t addr){
-    uint8_t buf[1];
-    
-    pf_open(RAM_FILE); // Open ram image file
-    UINT nr;
-    pf_lseek(addr); // Change the cusor
-    pf_read(buf, 1, &nr); // Read disk image
+    #ifdef ONE_USE
+    file.open(filepath, O_READ); // Open image file
+    #endif
+    #ifndef ONE_USE
+    file.open(RAM_FILE, O_READ); // Open ram image file
+    #endif
 
+    file.seekSet(addr); // Seek to the location
+    file.read(buf, 1);
+    file.close();
     return buf[0]; // Return the buffer
 }
 
 void ramwrite(uint32_t addr, byte value){
     byte buf[1];
     buf[0] = value;
-    pf_open(RAM_FILE); // Open ram image file
-    UINT nr;
-    pf_lseek(addr); // Change the cusor
-    pf_write(buf, 1, &nr); // Write ram image
-    pf_write(0, 0, &nr); // End of writing
+
+    #ifdef ONE_USE
+    file.open(filepath, O_WRITE);
+    #endif
+    #ifndef ONE_USE
+    file.open(RAM_FILE, O_WRITE);
+    #endif
+
+    file.seekSet(addr);
+    file.write(buf, 1);
+    file.close();
 }
-#endif
 
 /* fileinput() - Ask for virtual disk file to boot from */
 #ifdef BOOT_PROMPT
@@ -149,7 +138,8 @@ void fileinput(){
             }
         }
     }
-    
+
+    tmpstring.toUpperCase(); // Convert the string to upper case for FAT filesystem
     tmpstring.toCharArray(filepath, tmpstring.length()+1); // Convert the filepath to char array
     Serial.println(filepath);
 }

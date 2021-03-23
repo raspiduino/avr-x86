@@ -30,7 +30,7 @@
 #include "cpu.h"
 
 //#define DEBUG
-//#define CPU_8086
+#define CPU_8086
 #define STACK_LENGTH 32
 
 #define regax 0
