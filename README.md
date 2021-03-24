@@ -6,6 +6,7 @@
 
 ## How?
 AVR-x86 is based on [*Fake86*](http://fake86.rubbermallet.org/)'s core, ported to AVR by *corax89*. In the original version, binary is stored in a RAM array, then boot up and execute it. But AVR-x86 load the binary stored in a SD card to a *virtual RAM file* on the SD card. So you can have more RAM for the emulator than the AVR hardware's. That also means AVR-x86 can execute larger binary file!
+<br> It takes about one minute to load a 200K file.
 
 ## Why?
 For fun. It just a toy.
